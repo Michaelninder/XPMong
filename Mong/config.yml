@@ -1,2 +1,37 @@
-# XPMong configuration
-countdown_length: 15
+# XPMong Configuration
+# Set the countdown time in seconds
+countdown_time: 15
+
+# Set the default Knockback item
+knockback_item: "STICK"
+
+# Set the default Spleever item
+spleever_item: "IRON_PICKAXE"
+
+# Define custom Knockback items
+custom_knockback_items:
+  blaze_rod: # Example custom Knockback item (Blaze Rod)
+    trophy_cost: 10 # Trophy cost to purchase this item
+    required_ranks: []
+
+  redstone_torch: # Example custom Knockback item (Redstone Torch)
+    trophy_cost: 8
+    required_ranks: []
+
+  poppy: # Example custom Knockback item (Poppy/Red Flower)
+    trophy_cost: 5
+    required_ranks: []
+
+# Define custom Spleever items
+custom_spleever_items:
+  diamond_pickaxe: # Example custom Spleever item (Diamond Pickaxe)
+    trophy_cost: 10 # Trophy cost to purchase this item
+    required_ranks: []
+
+  golden_pickaxe: # Example custom Spleever item (Golden Pickaxe)
+    trophy_cost: 8
+    required_ranks: []
+
+  stone_pickaxe: # Example custom Spleever item (Stone Pickaxe)
+    trophy_cost: 5
+    required_ranks: []
