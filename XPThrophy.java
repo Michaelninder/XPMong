@@ -9,7 +9,6 @@ import org.bukkit.inventory.*;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.*;
 import org.bukkit.scoreboard.*;
-import me.clip.placeholderapi.PlaceholderAPI;
 
 import java.util.*;
 
@@ -112,13 +111,19 @@ public class XPThropy extends JavaPlugin implements Listener {
         int trophies = getPlayerTrophies(player);
         String trophiesPlaceholder = "%xpthropy_trophies%";
         String trophiesMessage = "Du hast " + trophiesPlaceholder + " Trophies!";
-        String messageWithPlaceholders = PlaceholderAPI.setPlaceholders(player, trophiesMessage);
-        player.sendMessage(messageWithPlaceholders);
+        player.sendMessage(trophiesMessage);
     }
 
     // Method to get player trophies
     public int getPlayerTrophies(Player player) {
         UUID playerId = player.getUniqueId();
         return trophies.getOrDefault(playerId, 0);
+    }
+
+    // Event handler for winning in Mong
+    @EventHandler
+    public void onMongWin(MongWinEvent event) {
+        Player player = event.getPlayer();
+        addTrophies(player, 5); // Add 5 trophies for winning in Mong
     }
 }
