@@ -1,0 +1,18 @@
+maps:
+  map1:
+    spawnPoint: {x: 0.0, y: 64.0, z: 0.0}
+    startPoints:
+      pos1: {x: 10.0, y: 64.0, z: 0.0}
+      pos2: {x: 20.0, y: 64.0, z: 0.0}
+    endPoints:
+      - {x: 30.0, y: 64.0, z: 0.0}
+      - {x: 40.0, y: 64.0, z: 0.0}
+    trophyReward: 5
+  map2:
+    spawnPoint: {x: 100.0, y: 64.0, z: 100.0}
+    startPoints:
+      pos1: {x: 110.0, y: 64.0, z: 100.0}
+      pos2: {x: 120.0, y: 64.0, z: 100.0}
+    endPoints:
+      - {x: 130.0, y: 64.0, z: 100.0}
+    trophyReward: 3
