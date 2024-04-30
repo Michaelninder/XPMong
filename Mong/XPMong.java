@@ -1,36 +1,48 @@
-import org.bukkit.*;
-import org.bukkit.command.*;
-import org.bukkit.entity.*;
-import org.bukkit.event.*;
-import org.bukkit.event.block.*;
-import org.bukkit.event.entity.*;
-import org.bukkit.event.player.*;
-import org.bukkit.inventory.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.*;
-import org.bukkit.scoreboard.*;
 
-import java.util.*;
+import java.util.HashMap;
 
 public class XPMong extends JavaPlugin implements Listener {
-    private HashMap<String, Location> spawnPoints = new HashMap<>();
+    private HashMap<Player, Integer> countdownTasks = new HashMap<>();
 
     @Override
     public void onEnable() {
         // Register events
         getServer().getPluginManager().registerEvents(this, this);
-        // Load spawn points from data storage
-        // Example: loadSpawnPoints();
-        // Register commands
-        registerCommands();
-        // Save default configuration if it doesn't exist
+        // Load configuration
         saveDefaultConfig();
     }
 
     @Override
-    public void onDisable() {
-        // Save spawn points to data storage
-        // Example: saveSpawnPoints();
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (command.getName().equalsIgnoreCase("mong")) {
+            if (!(sender instanceof Player)) {
+                sender.sendMessage(ChatColor.RED + "This command can only be used by players.");
+                return true;
+            }
+            Player player = (Player) sender;
+            if (args.length == 0) {
+                player.sendMessage(ChatColor.YELLOW + "Mong commands:");
+                // Add your commands here
+                return true;
+            }
+            // Handle subcommands here
+        }
+        return false;
     }
 
     @EventHandler
@@ -38,58 +50,73 @@ public class XPMong extends JavaPlugin implements Listener {
         Player player = event.getPlayer();
         // Check if the player has permission to join Mong game
         if (player.hasPermission("Mong.game.join")) {
-            // Teleport the player to the spectator spawn point
-            player.teleport(getSpawnPoint("spectator"));
+            player.getInventory().clear(); // Clear player's inventory
+            giveInventoryItems(player); // Give inventory items
+            startCountdown(player); // Start countdown for the game to begin
         }
     }
 
-    // Method to set a spawn point
-    public void setSpawnPoint(String spawnType, Location location) {
-        spawnPoints.put(spawnType.toLowerCase(), location);
-        // Example: saveSpawnPoints();
-    }
-
-    // Method to get a spawn point
-    public Location getSpawnPoint(String spawnType) {
-        return spawnPoints.getOrDefault(spawnType.toLowerCase(), null);
-    }
-
-    // Command to set a spawn point
-    public void setSpawnCommand(Player player, String[] args) {
-        if (args.length < 2) {
-            player.sendMessage(ChatColor.RED + "Usage: /mong setspawn <spawnType>");
-            return;
-        }
-
-        String spawnType = args[1].toLowerCase();
-        Location playerLocation = player.getLocation();
-        setSpawnPoint(spawnType, playerLocation);
-
-        player.sendMessage(ChatColor.GREEN + "Spawn point for " + spawnType + " set!");
-    }
-
-    // Command executor for setspawn command
-    private class SetSpawnCommandExecutor implements CommandExecutor {
-        @Override
-        public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-            if (!(sender instanceof Player)) {
-                sender.sendMessage(ChatColor.RED + "Only players can use this command!");
-                return true;
+    @EventHandler
+    public void onPlayerInteract(PlayerInteractEvent event) {
+        Player player = event.getPlayer();
+        Action action = event.getAction();
+        ItemStack item = event.getItem();
+        if (action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
+            if (item != null && item.getType() == Material.DIAMOND_PICKAXE) {
+                openCustomSpleeverMenu(player);
             }
-
-            Player player = (Player) sender;
-            // Check if the player has permission to set spawn
-            if (player.hasPermission("Mong.admin.setspawn")) {
-                setSpawnCommand(player, args);
-            } else {
-                player.sendMessage(ChatColor.RED + "You don't have permission to use this command!");
-            }
-            return true;
+            // Add more item interactions here
         }
     }
 
-    // Register commands and listeners
-    private void registerCommands() {
-        getCommand("mong").setExecutor(new SetSpawnCommandExecutor());
+    private void startCountdown(Player player) {
+        int countdownTime = getConfig().getInt("countdown_time", 15); // Get countdown time from config
+        int taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
+            int timeLeft = countdownTime;
+
+            @Override
+            public void run() {
+                if (timeLeft > 0) {
+                    player.sendMessage(ChatColor.YELLOW + "Game starting in " + timeLeft + " seconds...");
+                    timeLeft--;
+                } else {
+                    player.sendMessage(ChatColor.GREEN + "Game starting!");
+                    Bukkit.getScheduler().cancelTask(countdownTasks.get(player)); // Cancel the countdown task
+                    // Start the game logic here
+                }
+            }
+        }, 0L, 20L); // Run every second
+
+        countdownTasks.put(player, taskId); // Store the task ID for the player
+    }
+
+    private void giveInventoryItems(Player player) {
+        Inventory menu = Bukkit.createInventory(null, 9, ChatColor.BLUE + "Inventory Sorter");
+
+        // Fill the inventory sorter menu with items as needed
+        // Example:
+        ItemStack item = new ItemStack(Material.REDSTONE);
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName(ChatColor.GREEN + "Sort Inventory");
+        item.setItemMeta(meta);
+
+        menu.setItem(0, item);
+
+        player.openInventory(menu);
+    }
+
+    private void openCustomSpleeverMenu(Player player) {
+        Inventory menu = Bukkit.createInventory(null, 9, ChatColor.BLUE + "Custom Spleever Item");
+
+        // Fill the custom spleever item menu with items as needed
+        // Example:
+        ItemStack item = new ItemStack(Material.DIAMOND_PICKAXE);
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName(ChatColor.GREEN + "Diamond Pickaxe");
+        item.setItemMeta(meta);
+
+        menu.setItem(0, item);
+
+        player.openInventory(menu);
     }
 }
