@@ -1,0 +1,6 @@
+# XPThropy configuration
+messages:
+  victory_title: "&a&lVictory"
+  victory_subtitle: "&7+ &35 &7Trophies"
+  defeat_title: "&c&lDefeat"
+  defeat_subtitle: "&- &43 &7Trophies"
