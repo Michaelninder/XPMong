@@ -125,5 +125,16 @@ public class XPThropy extends JavaPlugin implements Listener {
     public void onMongWin(MongWinEvent event) {
         Player player = event.getPlayer();
         addTrophies(player, 5); // Add 5 trophies for winning in Mong
+        // Display victory title and subtitle
+        player.sendTitle(ChatColor.GREEN + "Victory", ChatColor.GRAY + "+ §35 §7Trophies", 10, 70, 20);
+    }
+
+    // Event handler for losing in Mong
+    @EventHandler
+    public void onMongLoss(MongLossEvent event) {
+        Player player = event.getPlayer();
+        removeTrophies(player, 3); // Remove 3 trophies for losing in Mong
+        // Display defeat title and subtitle
+        player.sendTitle(ChatColor.RED + "Defeat", ChatColor.GRAY + "- §43 §7Trophies", 10, 70, 20);
     }
 }
