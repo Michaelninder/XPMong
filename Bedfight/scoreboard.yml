@@ -1,0 +1,10 @@
+title: "&6&lBEDFIGHT"
+lines:
+  - ""
+  - "Red Team: {BedIcon}"
+  - "Blue Team: {BedIcon}"
+  - ""
+  - "&eXP-CRaft.mcplay.fun"
+bedIcons:
+  true: "&a✔"
+  false: "&c✘"
