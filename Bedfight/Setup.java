@@ -1,42 +1,128 @@
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
+import org.bukkit.Location;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 
-public class Setup implements CommandExecutor {
+public class Setup extends JavaPlugin {
+    private Location spawnPoint;
+    private Location pos1;
+    private Location pos2;
+    private Location redSpawn;
+    private Location blueSpawn;
+    private Location redBed;
+    private Location blueBed;
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player)) {
-            sender.sendMessage("Only players can use this command.");
-            return true;
+    public void onEnable() {
+        saveDefaultConfig();
+        loadLocations();
+    }
+
+    private void loadLocations() {
+        FileConfiguration config = getConfig();
+        spawnPoint = getLocation(config, "spawnPoint");
+        pos1 = getLocation(config, "pos1");
+        pos2 = getLocation(config, "pos2");
+        redSpawn = getLocation(config, "Red_spawn");
+        blueSpawn = getLocation(config, "Blue_spawn");
+        redBed = getLocation(config, "Red_bed");
+        blueBed = getLocation(config, "Blue_bed");
+    }
+
+    private Location getLocation(FileConfiguration config, String path) {
+        if (config.contains(path)) {
+            double x = config.getDouble(path + ".x");
+            double y = config.getDouble(path + ".y");
+            double z = config.getDouble(path + ".z");
+            return new Location(getServer().getWorlds().get(0), x, y, z);
         }
+        return null;
+    }
 
-        Player player = (Player) sender;
-        if (!player.hasPermission("bedfight.setup")) {
-            player.sendMessage("You don't have permission to use this command.");
-            return true;
+    public void setSpawnPoint(Player player) {
+        setLocation(player.getLocation(), "spawnPoint");
+    }
+
+    public void setPos1(Player player) {
+        setLocation(player.getLocation(), "pos1");
+    }
+
+    public void setPos2(Player player) {
+        setLocation(player.getLocation(), "pos2");
+    }
+
+    public void setRedSpawn(Player player) {
+        setLocation(player.getLocation(), "Red_spawn");
+    }
+
+    public void setBlueSpawn(Player player) {
+        setLocation(player.getLocation(), "Blue_spawn");
+    }
+
+    public void setRedBed(Player player) {
+        setLocation(player.getLocation(), "Red_bed");
+    }
+
+    public void setBlueBed(Player player) {
+        setLocation(player.getLocation(), "Blue_bed");
+    }
+
+    private void setLocation(Location location, String path) {
+        FileConfiguration config = getConfig();
+        config.set(path + ".x", location.getX());
+        config.set(path + ".y", location.getY());
+        config.set(path + ".z", location.getZ());
+        saveConfig();
+        switch (path) {
+            case "spawnPoint":
+                spawnPoint = location;
+                break;
+            case "pos1":
+                pos1 = location;
+                break;
+            case "pos2":
+                pos2 = location;
+                break;
+            case "Red_spawn":
+                redSpawn = location;
+                break;
+            case "Blue_spawn":
+                blueSpawn = location;
+                break;
+            case "Red_bed":
+                redBed = location;
+                break;
+            case "Blue_bed":
+                blueBed = location;
+                break;
         }
+    }
 
-        if (args.length != 1) {
-            player.sendMessage("Usage: /setup <death_height>");
-            return true;
-        }
+    public Location getSpawnPoint() {
+        return spawnPoint;
+    }
 
-        int deathHeight;
-        try {
-            deathHeight = Integer.parseInt(args[0]);
-        } catch (NumberFormatException e) {
-            player.sendMessage("Invalid death height. Please enter a number.");
-            return true;
-        }
+    public Location getPos1() {
+        return pos1;
+    }
 
-        // Set death height in config or wherever you store it
-        // Config.setDeathHeight(deathHeight);
+    public Location getPos2() {
+        return pos2;
+    }
 
-        // Set spawn points, etc.
+    public Location getRedSpawn() {
+        return redSpawn;
+    }
 
-        player.sendMessage("Bedfight setup complete!");
-        return true;
+    public Location getBlueSpawn() {
+        return blueSpawn;
+    }
+
+    public Location getRedBed() {
+        return redBed;
+    }
+
+    public Location getBlueBed() {
+        return blueBed;
     }
 }
