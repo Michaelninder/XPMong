@@ -1,0 +1,30 @@
+# Inventory Sorting Configuration
+#
+# This file contains the configuration for the inventory sorting menu.
+# You can customize the items and their positions in the menu.
+#
+# Use Material names for item types.
+# Use '&' for color codes.
+# Use 'title' to set the title of the menu.
+
+title: "&6Inventory Sorting Menu"
+
+# Items in the sorting menu
+items:
+  0:
+    type: "WOODEN_SWORD"
+    display_name: "&aSort Inventory"
+    lore:
+      - "&7Click to sort your inventory."
+
+  4:
+    type: "RED_STAINED_GLASS_PANE"
+    display_name: "&cPlaceholder"
+    lore:
+      - "&7Placeholder item"
+
+  8:
+    type: "LIME_STAINED_GLASS_PANE"
+    display_name: "&aPlaceholder"
+    lore:
+      - "&7Placeholder item"
