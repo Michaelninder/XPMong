@@ -1,7 +1,10 @@
 import org.bukkit.Location;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.io.File;
 
 public class Setup extends JavaPlugin {
     private Location spawnPoint;
@@ -31,10 +34,13 @@ public class Setup extends JavaPlugin {
 
     private Location getLocation(FileConfiguration config, String path) {
         if (config.contains(path)) {
-            double x = config.getDouble(path + ".x");
-            double y = config.getDouble(path + ".y");
-            double z = config.getDouble(path + ".z");
-            return new Location(getServer().getWorlds().get(0), x, y, z);
+            ConfigurationSection section = config.getConfigurationSection(path);
+            if (section != null) {
+                double x = section.getDouble("x");
+                double y = section.getDouble("y");
+                double z = section.getDouble("z");
+                return new Location(getServer().getWorlds().get(0), x, y, z);
+            }
         }
         return null;
     }
@@ -69,33 +75,12 @@ public class Setup extends JavaPlugin {
 
     private void setLocation(Location location, String path) {
         FileConfiguration config = getConfig();
-        config.set(path + ".x", location.getX());
-        config.set(path + ".y", location.getY());
-        config.set(path + ".z", location.getZ());
+        ConfigurationSection section = config.createSection(path);
+        section.set("x", location.getX());
+        section.set("y", location.getY());
+        section.set("z", location.getZ());
         saveConfig();
-        switch (path) {
-            case "spawnPoint":
-                spawnPoint = location;
-                break;
-            case "pos1":
-                pos1 = location;
-                break;
-            case "pos2":
-                pos2 = location;
-                break;
-            case "Red_spawn":
-                redSpawn = location;
-                break;
-            case "Blue_spawn":
-                blueSpawn = location;
-                break;
-            case "Red_bed":
-                redBed = location;
-                break;
-            case "Blue_bed":
-                blueBed = location;
-                break;
-        }
+        loadLocations(); // Reload locations after saving
     }
 
     public Location getSpawnPoint() {
@@ -124,5 +109,35 @@ public class Setup extends JavaPlugin {
 
     public Location getBlueBed() {
         return blueBed;
+    }
+
+    public boolean saveMap(String mapName) {
+        File mapFile = new File(getDataFolder(), mapName + ".yml");
+        if (!mapFile.exists()) {
+            try {
+                mapFile.createNewFile();
+                FileConfiguration mapConfig = new YamlConfiguration();
+                mapConfig.set("spawnPoint", getLocationString(spawnPoint));
+                mapConfig.set("pos1", getLocationString(pos1));
+                mapConfig.set("pos2", getLocationString(pos2));
+                mapConfig.set("Red_spawn", getLocationString(redSpawn));
+                mapConfig.set("Blue_spawn", getLocationString(blueSpawn));
+                mapConfig.set("Red_bed", getLocationString(redBed));
+                mapConfig.set("Blue_bed", getLocationString(blueBed));
+                mapConfig.save(mapFile);
+                return true;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+        return false;
+    }
+
+    private String getLocationString(Location location) {
+        if (location != null) {
+            return location.getWorld().getName() + "," + location.getX() + "," + location.getY() + "," + location.getZ();
+        }
+        return "";
     }
 }
