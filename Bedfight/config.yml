@@ -1,0 +1,9 @@
+# XPBedfight Configuration
+#
+# This file contains settings for the XPBedfight plugin.
+
+# Minimum Y-coordinate for respawn (default: 10)
+min_respawn_height: 10
+
+# Respawn delay in seconds (default: 5 seconds)
+respawn_delay: 5
