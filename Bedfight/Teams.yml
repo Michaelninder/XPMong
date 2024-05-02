@@ -1,0 +1,12 @@
+# Teams Configuration
+#
+# This file contains the configuration for teams in the Bedfight plugin.
+# You can customize the team names and their colors here.
+
+teams:
+  red:
+    name: "&cRed Team"
+    color: "&c"
+  blue:
+    name: "&9Blue Team"
+    color: "&9"
